@@ -6,7 +6,7 @@
 блюдо, он не сможет принять следующий заказ. Это плохо.
 
 - Celery — это помощник повара. Он забирает сложные заказы и готовит их на 
-"кухне" (фоновые процессы), не отвлекая основного повара.
+'кухне' (фоновые процессы), не отвлекая основного повара.
 
 - RabbitMQ — это доска объявлений на кухне, куда вешаются заказы. Celery смотрит 
 а доску и берет себе задания.
@@ -57,8 +57,8 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: rabbitmq_school
     ports:
-      - "5672:5672"      # Порт для подключения (AMQP)
-      - "15672:15672"    # Порт для веб-интерфейса (Management UI)
+      - '5672:5672'      # Порт для подключения (AMQP)
+      - '15672:15672'    # Порт для веб-интерфейса (Management UI)
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -69,7 +69,7 @@ services:
     image: redis:7-alpine
     container_name: redis_school
     ports:
-      - "6379:6379"      # Порт для подключения
+      - '6379:6379'      # Порт для подключения
     volumes:
       - redis_data:/data
 
@@ -89,8 +89,8 @@ docker-compose up -d
 логин/пароль guest/guest) и Redis.
 
 - Что такое Celery? Это распределенная очередь задач. Ты говоришь программе: 
-"сделай это", она кладет задание в очередь и сразу отвечает 
-"ок, принято, иди дальше". Само задание выполняется позже в фоне.
+'сделай это', она кладет задание в очередь и сразу отвечает 
+'ок, принято, иди дальше'. Само задание выполняется позже в фоне.
 
 - Роль RabbitMQ: Он хранит эти задания. Если Celery-работник (worker) занят или 
 выключен, задание не пропадет, а будет ждать в RabbitMQ.
@@ -167,28 +167,28 @@ sys.path.insert(0, str(Path(__file__).parent))
 def run_worker(queue, name):
     """Запуск воркера для конкретной очереди"""
     cmd = [
-        "celery", "-A", "celery_app", "worker",
-        "--loglevel=info",
-        "-P", "eventlet",
-        "-Q", queue,
-        "-n", f"{name}@%h"
+        'celery', '-A', 'celery_app', 'worker',
+        '--loglevel=info',
+        '-P', 'eventlet',
+        '-Q', queue,
+        '-n', f'{name}@%h'
     ]
     return subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)
 
-if __name__ == "__main__":
-    print("🚀 Запускаем воркеры...")
+if __name__ == '__main__':
+    print('Запускаем воркеры...')
     
     # Запускаем воркеры в отдельных окнах
     workers = [
-        run_worker("math", "math_worker"),
-        run_worker("network", "network_worker"),
-        run_worker("users", "users_worker"),
-        run_worker("weather", "weather_worker"),
-        run_worker("math,network,users,weather", "universal_worker"),
+        run_worker('math', 'math_worker'),
+        run_worker('network', 'network_worker'),
+        run_worker('users', 'users_worker'),
+        run_worker('weather', 'weather_worker'),
+        run_worker('math,network,users,weather', 'universal_worker'),
     ]
     
-    print(f"✅ Запущено {len(workers)} воркеров")
-    print("👀 Смотри в Flower: http://localhost:5555")
+    print(f'Запущено {len(workers)} воркеров')
+    print('Смотри в Flower: http://localhost:5555')
     
     # Ждем завершения
     for w in workers:
@@ -213,11 +213,11 @@ celery -A celery_app flower --port=5555 --broker=amqp://guest:guest@localhost:56
 $ python
 >>> from tasks.math import add  # импортируем задачу
 >>> res = add.delay(1, 2)  # запускаем задачу
->>> print(f"ID задачи: {res.id}")  # получаем ID задачи
+>>> print(f'ID задачи: {res.id}')  # получаем ID задачи
 ID задачи: 958f185c-5e2d-49ef-97db-794f24a31996
->>> print(f"Готова? {res.ready()}")  #
+>>> print(f'Готова? {res.ready()}')  #
 Готова? True
->>> print(f"Результат: {res.get()}")  # получаем результат
+>>> print(f'Результат: {res.get()}')  # получаем результат
 Результат: 3
 >>>
 ```
@@ -323,7 +323,7 @@ from pathlib import Path
 
 def run_worker(queue, name, concurrency=1, prefetch=4):
     """Запуск воркера с настраиваемыми параметрами приоритета"""
-    print(f'Запуск {name}: очередь "{queue}", '
+    print(f'Запуск {name}: очередь '{queue}', '
           f'concurrency={concurrency}, prefetch={prefetch}')
 
     cmd = [
@@ -440,11 +440,11 @@ celery -A celery_app flower --port=5555 --broker=amqp://guest:guest@localhost:56
 $ python
 >>> from tasks.math import add  # импортируем задачу
 >>> res = add.delay(1, 2)  # запускаем задачу
->>> print(f"ID задачи: {res.id}")  # получаем ID задачи
+>>> print(f'ID задачи: {res.id}')  # получаем ID задачи
 ID задачи: 958f185c-5e2d-49ef-97db-794f24a31996
->>> print(f"Готова? {res.ready()}")  #
+>>> print(f'Готова? {res.ready()}')  #
 Готова? True
->>> print(f"Результат: {res.get()}")  # получаем результат
+>>> print(f'Результат: {res.get()}')  # получаем результат
 Результат: 3
 >>>
 ```
